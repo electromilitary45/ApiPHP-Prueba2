@@ -7,7 +7,7 @@ $endpoint = end($uri);
 $controller = new UserController();
 
 switch ($endpoint) {
-    case 'helloWorld':
+    case '':
         http_response_code(200);
         echo json_encode(['message' => 'API is running']);
         break;
