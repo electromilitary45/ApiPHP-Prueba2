@@ -3,3 +3,5 @@ RewriteBase /ApiPHP-Prueba2/
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php [QSA,L]
+# // Redirect root to helloWorld
+RewriteRule ^$ /ApiPHP-Prueba2/helloWorld [R=302,L] 
