@@ -1,3 +1,4 @@
+-- MYSQL DATABASE SCRIPT
 CREATE DATABASE IF NOT EXISTS bdPrueba;
 
 CREATE TABLE IF NOT EXISTS avii.users (
@@ -21,7 +22,7 @@ CREATE TABLE IF NOT EXISTS avii.recetas (
     nombre VARCHAR(100) NOT NULL,
     descripcion TEXT NOT NULL,
     ingredientes TEXT NOT NULL,
-    instrucciones TEXT NOT NULL,,
+    instrucciones TEXT NOT NULL,
     tipo VARCHAR(50) NOT NULL,
     categoriaId INT,
     fechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
