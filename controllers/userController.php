@@ -73,7 +73,18 @@ class userController{
         
     }//fin buscarUsuario
 
-    public
+    public function listarUsuarios(){
+        $stmt = $this->conn->prepare("SELECT * FROM users");
+        $stmt->execute();
+        $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if ($users) {
+            http_response_code(200);
+            echo json_encode($users);
+        } else {
+            http_response_code(404);
+            echo json_encode(['message' => 'No hay usuarios registrados']);
+        }
+    }
 
 }//fin userController
 ?>

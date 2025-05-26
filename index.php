@@ -3,7 +3,7 @@ require_once 'controllers/userController.php';
 
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $endpoint = basename($path);
-$controller = new UserController();
+$controller = new userController();
 
 switch ($endpoint) {
     case 'helloWorld':
@@ -13,11 +13,11 @@ switch ($endpoint) {
     case 'CrearUsuario':
         $controller->crearUsuario();
         break;
-    // case 'BuscarUsuario':
-    //     $controller->getUser();
-    //     break;
     case 'buscarUsuario':
         $controller->buscarUsuario();
+        break;
+    case 'listarUsuarios':
+        $controller->listarUsuarios();
         break;
     default:
         http_response_code(404);
