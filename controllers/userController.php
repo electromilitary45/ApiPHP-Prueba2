@@ -125,5 +125,24 @@ class userController{
             echo json_encode(['message' => 'Error al actualizar el usuario']);
         }
     }
+
+    public function eliminarUsuario(){
+        $id = $_GET['id'] ?? null;
+        if (!$id) {
+            http_response_code(400);
+            echo json_encode(['message' => 'ID de usuario no proporcionado']);
+            return;
+        }
+
+        $stmt = $this->conn->prepare("DELETE FROM users WHERE userId = :id");
+        if ($stmt->execute([':id' => $id])) {
+            http_response_code(200);
+            echo json_encode(['message' => 'Usuario eliminado exitosamente']);
+        } else {
+            http_response_code(500);
+            echo json_encode(['message' => 'Error al eliminar el usuario']);
+        }
+    }
+
 }//fin userController
 ?>
