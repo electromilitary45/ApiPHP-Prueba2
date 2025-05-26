@@ -1,10 +1,6 @@
 RewriteEngine On
 RewriteBase /ApiPHP-Prueba2/
 
-# Redirigir la raíz directamente a helloWorld
-RewriteCond %{REQUEST_URI} ^/ApiPHP-Prueba2/?$
-RewriteRule ^$ /ApiPHP-Prueba2/helloWorld [R=302,L]
-
 # Enviar todo lo demás a index.php si no es archivo/directorio
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

@@ -1,27 +1,88 @@
+/**
+ * API Front Controller
+ *
+ * Este archivo actúa como punto de entrada para la API, manejando el enrutamiento básico
+ * y la invocación dinámica de controladores y acciones según la URL solicitada.
+ *
+ * Funcionalidad principal:
+ * - Establece el encabezado de respuesta como JSON.
+ * - Obtiene y procesa la ruta de la solicitud para determinar el controlador y la acción.
+ * - Permite trabajar dentro de una subcarpeta eliminando el nombre base de los segmentos de la URL.
+ * - Si no se especifica controlador ni acción, responde con un mensaje por defecto.
+ * - Valida la existencia del archivo y clase del controlador.
+ * - Valida la existencia del método (acción) en el controlador.
+ * - Ejecuta la acción solicitada del controlador correspondiente.
+ *
+ * Respuestas HTTP:
+ * - 200: API en funcionamiento o acción ejecutada correctamente.
+ * - 400: Falta controlador o acción en la URL.
+ * - 404: Controlador o método no encontrado.
+ * - 500: Clase de controlador no existe.
+ *
+ * @author  Tu Nombre
+ * @version 1.0
+ */
+
 <?php
-require_once 'controllers/userController.php';
+header('Content-Type: application/json');
+require_once 'controllers/configController.php'; // Nombre del controlador de configuración
+$confController = new ConfigController();
 
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$endpoint = basename($path);
-$controller = new userController();
+$segments = explode('/', trim($path, '/'));
 
-switch ($endpoint) {
-    case 'helloWorld':
-        http_response_code(200);
-        echo json_encode(['message' => 'API is running']);
-        break;
-    case 'CrearUsuario':
-        $controller->crearUsuario();
-        break;
-    case 'buscarUsuario':
-        $controller->buscarUsuario();
-        break;
-    case 'listarUsuarios':
-        $controller->listarUsuarios();
-        break;
-    default:
-        http_response_code(404);
-        echo json_encode(['message' => 'Endpoint not found']);
-        break;
+// Si estás trabajando en una carpeta (como ApiPHP-Prueba2), elimínala de los segmentos
+$baseFolder = 'ApiPHP-Prueba2'; // Cambia esto si tu carpeta tiene otro nombre
+if (!empty($segments[0]) && $segments[0] === $baseFolder) {
+    array_shift($segments); // quitamos ApiPHP-Prueba2
 }
+
+// ✅ Si no hay segmentos → mostrar mensaje por defecto
+if (empty($segments[0])) {
+    http_response_code(200);
+    echo json_encode(['message' => 'API is running']);
+    //salto de linea
+    echo "\n";
+    $confController->probarConexion(); // Probar conexión a la base de datos
+    exit;
+}
+
+// Asignar controlador y acción
+$controllerName = $segments[0] ?? null;
+$action = $segments[1] ?? null;
+
+if (!$controllerName || !$action) {
+    http_response_code(400);
+    echo json_encode(['message' => 'Falta controlador o acción en la URL']);
+    exit;
+}
+
+// Formar ruta del archivo del controlador y nombre de clase
+$controllerFile = 'controllers/' . $controllerName . 'Controller.php';
+$controllerClass = ucfirst($controllerName) . 'Controller';
+
+if (!file_exists($controllerFile)) {
+    http_response_code(404);
+    echo json_encode(['message' => "Controlador '$controllerClass' no encontrado"]);
+    exit;
+}
+
+require_once $controllerFile;
+
+if (!class_exists($controllerClass)) {
+    http_response_code(500);
+    echo json_encode(['message' => "La clase '$controllerClass' no existe"]);
+    exit;
+}
+
+$controller = new $controllerClass();
+
+if (!method_exists($controller, $action)) {
+    http_response_code(404);
+    echo json_encode(['message' => "Método '$action' no encontrado en $controllerClass"]);
+    exit;
+}
+
+// ✅ Ejecutar acción
+call_user_func([$controller, $action]);
 ?>

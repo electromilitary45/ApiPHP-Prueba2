@@ -19,10 +19,10 @@ class configController{
             $stmt = $this->conn->prepare($sql);
             $stmt->execute();
             http_response_code(200);
-            echo json_encode(['message' => 'Conexión exitosa a la base de datos']);
+            echo json_encode(['Conexion BD' => '100%']);
         } catch (PDOException $e) {
             http_response_code(500);
-            echo json_encode(['message' => 'Error al conectar a la base de datos: ' . $e->getMessage()]);
+            echo json_encode(['Conexion BD' => 'ERROR' . $e->getMessage()]);
         }
     }
 }
