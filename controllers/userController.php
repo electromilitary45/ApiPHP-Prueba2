@@ -86,5 +86,44 @@ class userController{
         }
     }
 
+    public function actualizarUsuario(){
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        if (!isset($data['userId']) || !isset($data['nombre']) || !isset($data['profesion']) || !isset($data['telefono'])) {
+            http_response_code(400);
+            echo json_encode(['message' => 'Faltan datos necesarios']);
+            return;
+        }
+        
+        $userId = $data['userId'];
+        $nombre = $data['nombre'];
+        $profesion = $data['profesion'];
+        $telefono = $data['telefono'];
+        $edad = isset($data['edad']) ? $data['edad'] : null;
+        $peso = isset($data['peso']) ? $data['peso'] : null;
+        $estatura = isset($data['estatura']) ? $data['estatura'] : null;
+
+        $sql= "UPDATE users SET nombre = :nombre, profesion = :profesion, telefono = :telefono, 
+                edad = :edad, peso = :peso, estatura = :estatura WHERE userId = :userId";
+
+        $stmt = $this->conn->prepare($sql);
+
+        // Bind parameters
+        $stmt->bindParam(':userId', $userId);
+        $stmt->bindParam(':nombre', $nombre);
+        $stmt->bindParam(':profesion', $profesion);
+        $stmt->bindParam(':telefono', $telefono);
+        $stmt->bindParam(':edad', $edad);
+        $stmt->bindParam(':peso', $peso);
+        $stmt->bindParam(':estatura', $estatura);
+
+        if ($stmt->execute()) {
+            http_response_code(200);
+            echo json_encode(['message' => 'Usuario actualizado exitosamente']);
+        } else {
+            http_response_code(500);
+            echo json_encode(['message' => 'Error al actualizar el usuario']);
+        }
+    }
 }//fin userController
 ?>
