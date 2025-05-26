@@ -1,7 +1,7 @@
 <?php
 class Database {
     private $host = 'localhost';
-    private $dbname = 'bdprueba';
+    private $dbname = 'avii';
     private $username = 'root';
     private $password = '';
     public $conn;

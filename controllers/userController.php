@@ -51,27 +51,34 @@ class userController{
         }
     }//fin crearUsuario
 
-    public function buscarUsuario(){
-        
-        $id = $_GET['id'] ?? null;
+    public function buscarUsuario() {
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        $id = $data['id'] ?? null;
         if (!$id) {
             http_response_code(400);
             echo json_encode(['message' => 'ID de usuario no proporcionado']);
             return;
         }
 
-        $stmt = $this->conn->prepare("SELECT * FROM users WHERE userId = :id");
-        $stmt->execute([':id' => $id]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($user) {
-            http_response_code(200);
-            echo json_encode($user);
-        } else {
-            http_response_code(404);
-            echo json_encode(['message' => 'Usuario no encontrado']);
+        try {
+            $stmt = $this->conn->prepare("SELECT * FROM users WHERE userId = :id");
+            $stmt->execute([':id' => $id]);
+            $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($usuario) {
+                http_response_code(200);
+                echo json_encode($usuario);
+            } else {
+                http_response_code(404);
+                echo json_encode(['message' => 'Usuario no encontrado']);
+            }
+        } catch (PDOException $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Error al buscar usuario', 'detalle' => $e->getMessage()]);
         }
-        
-    }//fin buscarUsuario
+    }
+
 
     public function listarUsuarios(){
         $stmt = $this->conn->prepare("SELECT * FROM users");
