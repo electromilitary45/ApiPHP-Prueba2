@@ -41,7 +41,7 @@ class userController{
         $stmt->bindParam(':edad', $edad);
         $stmt->bindParam(':peso', $peso);
         $stmt->bindParam(':estatura', $estatura);
-        
+
         if ($stmt->execute()) {
             http_response_code(201);
             echo json_encode(['message' => 'Usuario creado exitosamente']);
@@ -50,6 +50,30 @@ class userController{
             echo json_encode(['message' => 'Error al crear el usuario']);
         }
     }//fin crearUsuario
+
+    public function buscarUsuario(){
+        
+        $id = $_GET['id'] ?? null;
+        if (!$id) {
+            http_response_code(400);
+            echo json_encode(['message' => 'ID de usuario no proporcionado']);
+            return;
+        }
+
+        $stmt = $this->conn->prepare("SELECT * FROM users WHERE userId = :id");
+        $stmt->execute([':id' => $id]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($user) {
+            http_response_code(200);
+            echo json_encode($user);
+        } else {
+            http_response_code(404);
+            echo json_encode(['message' => 'Usuario no encontrado']);
+        }
+        
+    }//fin buscarUsuario
+
+    public
 
 }//fin userController
 ?>

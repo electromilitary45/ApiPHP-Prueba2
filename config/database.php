@@ -20,6 +20,6 @@ class Database {
         }
         return $this->conn;
     }//fin connect
-
+    
 }//fin class Database
 ?>
